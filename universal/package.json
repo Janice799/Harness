@@ -9,6 +9,8 @@
     "harness:quick": "node scripts/harness-runner.js --mode quick",
     "harness:full": "node scripts/harness-runner.js --mode full",
     "harness:ci": "node scripts/harness-runner.js --pipeline ci",
+    "harness:history": "node scripts/harness-runner.js --history",
+    "harness:compare": "node scripts/harness-runner.js --compare latest",
     "harness:json": "node scripts/harness-runner.js --mode full --json"
   },
   "engines": {

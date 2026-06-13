@@ -22,11 +22,14 @@ runner plus a Codex adapter.
 
 ## What Was Added Here
 
-The universal JavaScript runner now supports tags and lightweight pipelines:
+The universal JavaScript runner now supports tags, lightweight pipelines,
+history, and run comparison:
 
 ```bash
 node universal/scripts/harness-runner.js --root universal --tag smoke
 node universal/scripts/harness-runner.js --root universal --pipeline ci
+node universal/scripts/harness-runner.js --root universal --history
+node universal/scripts/harness-runner.js --root universal --compare latest
 ```
 
 Checks can define:
@@ -44,7 +47,6 @@ Checks can define:
 1. Add an optional `harness serve` dashboard command.
 2. Add webhook notification support.
 3. Add a scheduler command for local monitoring.
-4. Add run comparison using `harness/results/latest.json` and prior reports.
 
 ## Keep Out Of The Core For Now
 

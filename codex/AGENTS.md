@@ -13,7 +13,7 @@ Use git@github.com:Janice799/Harness.git as the harness template.
 Apply the universal harness to this project.
 If this is a Codex project, also apply the codex adapter.
 Then update harness.config.json for this project's build/test/lint/smoke commands.
-Run the quick harness and report the result.
+Run the quick harness, compare it with the previous run if history exists, and report the result.
 ```
 
 ## Required Behavior
@@ -29,6 +29,12 @@ Run the quick harness and report the result.
 
   ```bash
   npm run harness:full
+  ```
+
+- When history exists, compare the latest run against the previous run:
+
+  ```bash
+  npm run harness:compare
   ```
 
 - If a command fails, fix the cause before continuing unless the user explicitly asks to skip it.

@@ -10,7 +10,7 @@ Use git@github.com:Janice799/Harness.git as the harness template.
 Apply the universal harness to this project.
 If this is a Codex project, also apply the codex adapter.
 Then update harness.config.json for this project's build/test/lint/smoke commands.
-Run the quick harness and report the result.
+Run the quick harness, compare it with the previous run if history exists, and report the result.
 ```
 
 ## What The Agent Should Do
@@ -26,10 +26,17 @@ Run the quick harness and report the result.
    npm run harness
    ```
 
-6. Report:
+6. If there is prior history, run:
+
+   ```bash
+   npm run harness:compare
+   ```
+
+7. Report:
    - which files were added or changed
    - which harness mode ran
    - pass/fail summary
+   - status changes versus the previous run, if available
    - any remaining failures
 
 ## Expected Target Project Files

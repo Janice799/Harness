@@ -9,6 +9,8 @@
     "harness:quick": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode quick",
     "harness:full": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode full",
     "harness:ci": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --pipeline ci",
+    "harness:history": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --history",
+    "harness:compare": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --compare latest",
     "harness:json": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode full --json"
   },
   "keywords": [

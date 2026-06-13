@@ -34,6 +34,8 @@ From the repo root:
 npm run harness
 npm run harness:ci
 npm run harness:full
+npm run harness:history
+npm run harness:compare
 ```
 
 Or run the universal harness directly:
@@ -43,6 +45,8 @@ cd universal
 npm run harness
 npm run harness:ci
 node scripts/harness-runner.js --tag smoke
+node scripts/harness-runner.js --history
+node scripts/harness-runner.js --compare latest
 ```
 
 ## Use In Any Project
@@ -92,7 +96,7 @@ Use git@github.com:Janice799/Harness.git as the harness template.
 Apply the universal harness to this project.
 If this is a Codex project, also apply the codex adapter.
 Then update harness.config.json for this project's build/test/lint/smoke commands.
-Run the quick harness and report the result.
+Run the quick harness, compare it with the previous run if history exists, and report the result.
 ```
 
 ## Reports
