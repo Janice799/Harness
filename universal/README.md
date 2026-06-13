@@ -14,6 +14,7 @@ Or:
 ```bash
 node scripts/harness-runner.js --mode quick
 node scripts/harness-runner.js --check smoke
+node scripts/harness-runner.js --tag smoke
 ```
 
 ## Configure
@@ -25,6 +26,7 @@ Each check supports:
 - `id`: stable check id
 - `name`: display name
 - `command`: shell command to run
+- `tags`: optional labels for filtering checks
 - `timeoutMs`: timeout in milliseconds
 - `retries`: retry count after the first attempt
 - `required`: whether failure should fail the whole run

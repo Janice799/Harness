@@ -9,6 +9,7 @@
     {
       "id": "install-check",
       "name": "Install Check",
+      "tags": ["system"],
       "command": "npm --version",
       "timeoutMs": 30000,
       "retries": 0,
@@ -17,6 +18,7 @@
     {
       "id": "lint",
       "name": "Lint",
+      "tags": ["quality"],
       "command": "npm run lint --if-present",
       "timeoutMs": 120000,
       "retries": 0,
@@ -25,6 +27,7 @@
     {
       "id": "unit",
       "name": "Unit Tests",
+      "tags": ["test"],
       "command": "npm test --if-present",
       "timeoutMs": 120000,
       "retries": 0,
@@ -33,6 +36,7 @@
     {
       "id": "build",
       "name": "Build",
+      "tags": ["build"],
       "command": "npm run build --if-present",
       "timeoutMs": 180000,
       "retries": 0,
@@ -41,6 +45,7 @@
     {
       "id": "smoke",
       "name": "Smoke Check",
+      "tags": ["smoke"],
       "command": "node examples/checks/sample-pass.js",
       "timeoutMs": 30000,
       "retries": 1,

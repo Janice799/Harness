@@ -8,6 +8,7 @@ function parseArgs(argv) {
   const args = {
     mode: null,
     check: null,
+    tag: null,
     json: false,
     hook: false,
     config: 'harness.config.json',
@@ -22,6 +23,8 @@ function parseArgs(argv) {
     else if (arg.startsWith('--mode=')) args.mode = arg.slice('--mode='.length);
     else if (arg === '--check') args.check = argv[++index];
     else if (arg.startsWith('--check=')) args.check = arg.slice('--check='.length);
+    else if (arg === '--tag') args.tag = argv[++index];
+    else if (arg.startsWith('--tag=')) args.tag = arg.slice('--tag='.length);
     else if (arg === '--config') args.config = argv[++index];
     else if (arg.startsWith('--config=')) args.config = arg.slice('--config='.length);
     else if (arg === '--root') args.root = argv[++index];
@@ -43,10 +46,12 @@ function printHelp() {
   node scripts/harness-runner.js --mode quick
   node scripts/harness-runner.js --mode full --json
   node scripts/harness-runner.js --check smoke
+  node scripts/harness-runner.js --tag smoke
 
 Options:
   --mode <name>      Run checks listed in harness.config.json modes
   --check <id>       Run one check by id
+  --tag <tag>         Run checks containing a tag
   --json             Print the full JSON report
   --config <path>    Use a custom config path
   --root <path>      Run from a custom project root
@@ -61,7 +66,8 @@ function readConfig(rootDir, configPath) {
 
 function selectChecks(config, args) {
   if (args.check) {
-    return config.checks.filter((check) => check.id === args.check);
+    const selected = config.checks.filter((check) => check.id === args.check);
+    return filterByTag(selected, args.tag);
   }
 
   const mode = args.mode || config.defaultMode || 'quick';
@@ -71,11 +77,17 @@ function selectChecks(config, args) {
   }
 
   const checksById = new Map(config.checks.map((check) => [check.id, check]));
-  return ids.map((id) => {
+  const selected = ids.map((id) => {
     const check = checksById.get(id);
     if (!check) throw new Error(`Mode references missing check: ${id}`);
     return check;
   });
+  return filterByTag(selected, args.tag);
+}
+
+function filterByTag(checks, tag) {
+  if (!tag) return checks;
+  return checks.filter((check) => Array.isArray(check.tags) && check.tags.includes(tag));
 }
 
 function runCommand(rootDir, check) {
@@ -208,6 +220,7 @@ async function main() {
     runId,
     mode: args.check ? null : args.mode || config.defaultMode || 'quick',
     check: args.check,
+    tag: args.tag,
     hook: args.hook,
     root: args.root,
     status: blockingFailures.length === 0 ? 'pass' : 'fail',

@@ -40,6 +40,7 @@ Or run the universal harness directly:
 ```bash
 cd universal
 npm run harness
+node scripts/harness-runner.js --tag smoke
 ```
 
 ## Use In Any Project
