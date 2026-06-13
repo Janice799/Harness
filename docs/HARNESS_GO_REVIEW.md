@@ -22,10 +22,11 @@ runner plus a Codex adapter.
 
 ## What Was Added Here
 
-The universal JavaScript runner now supports tags:
+The universal JavaScript runner now supports tags and lightweight pipelines:
 
 ```bash
 node universal/scripts/harness-runner.js --root universal --tag smoke
+node universal/scripts/harness-runner.js --root universal --pipeline ci
 ```
 
 Checks can define:
@@ -40,11 +41,10 @@ Checks can define:
 
 ## Recommended Future Extensions
 
-1. Add `pipelines` to `harness.config.json`.
-2. Add an optional `harness serve` dashboard command.
-3. Add webhook notification support.
-4. Add a scheduler command for local monitoring.
-5. Add run comparison using `harness/results/latest.json` and prior reports.
+1. Add an optional `harness serve` dashboard command.
+2. Add webhook notification support.
+3. Add a scheduler command for local monitoring.
+4. Add run comparison using `harness/results/latest.json` and prior reports.
 
 ## Keep Out Of The Core For Now
 

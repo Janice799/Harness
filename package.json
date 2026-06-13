@@ -8,6 +8,7 @@
     "harness": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode quick",
     "harness:quick": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode quick",
     "harness:full": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode full",
+    "harness:ci": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --pipeline ci",
     "harness:json": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode full --json"
   },
   "keywords": [

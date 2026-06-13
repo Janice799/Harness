@@ -5,6 +5,27 @@
     "quick": ["lint", "unit", "smoke"],
     "full": ["install-check", "lint", "unit", "build", "smoke"]
   },
+  "pipelines": {
+    "ci": [
+      {
+        "name": "quality",
+        "mode": "quick",
+        "failFast": true
+      },
+      {
+        "name": "build",
+        "check": "build",
+        "failFast": true
+      }
+    ],
+    "release": [
+      {
+        "name": "full-gate",
+        "mode": "full",
+        "failFast": true
+      }
+    ]
+  },
   "checks": [
     {
       "id": "install-check",

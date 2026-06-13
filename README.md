@@ -32,6 +32,7 @@ From the repo root:
 
 ```bash
 npm run harness
+npm run harness:ci
 npm run harness:full
 ```
 
@@ -40,6 +41,7 @@ Or run the universal harness directly:
 ```bash
 cd universal
 npm run harness
+npm run harness:ci
 node scripts/harness-runner.js --tag smoke
 ```
 

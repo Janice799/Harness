@@ -6,6 +6,7 @@ This folder contains the tool-agnostic harness. It does not require Codex.
 
 ```bash
 npm run harness
+npm run harness:ci
 npm run harness:full
 ```
 
@@ -15,6 +16,7 @@ Or:
 node scripts/harness-runner.js --mode quick
 node scripts/harness-runner.js --check smoke
 node scripts/harness-runner.js --tag smoke
+node scripts/harness-runner.js --pipeline ci
 ```
 
 ## Configure
@@ -42,4 +44,25 @@ Use modes to separate fast iteration from slower release checks:
     "full": ["install-check", "lint", "unit", "build", "smoke"]
   }
 }
+```
+
+## Pipelines
+
+Use pipelines for ordered stages with fail-fast behavior:
+
+```json
+{
+  "pipelines": {
+    "ci": [
+      { "name": "quality", "mode": "quick", "failFast": true },
+      { "name": "build", "check": "build", "failFast": true }
+    ]
+  }
+}
+```
+
+Run:
+
+```bash
+npm run harness:ci
 ```

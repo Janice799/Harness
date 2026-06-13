@@ -8,6 +8,7 @@ function parseArgs(argv) {
   const args = {
     mode: null,
     check: null,
+    pipeline: null,
     tag: null,
     json: false,
     hook: false,
@@ -23,6 +24,8 @@ function parseArgs(argv) {
     else if (arg.startsWith('--mode=')) args.mode = arg.slice('--mode='.length);
     else if (arg === '--check') args.check = argv[++index];
     else if (arg.startsWith('--check=')) args.check = arg.slice('--check='.length);
+    else if (arg === '--pipeline') args.pipeline = argv[++index];
+    else if (arg.startsWith('--pipeline=')) args.pipeline = arg.slice('--pipeline='.length);
     else if (arg === '--tag') args.tag = argv[++index];
     else if (arg.startsWith('--tag=')) args.tag = arg.slice('--tag='.length);
     else if (arg === '--config') args.config = argv[++index];
@@ -46,11 +49,13 @@ function printHelp() {
   node scripts/harness-runner.js --mode quick
   node scripts/harness-runner.js --mode full --json
   node scripts/harness-runner.js --check smoke
+  node scripts/harness-runner.js --pipeline ci
   node scripts/harness-runner.js --tag smoke
 
 Options:
   --mode <name>      Run checks listed in harness.config.json modes
   --check <id>       Run one check by id
+  --pipeline <name>  Run an ordered pipeline
   --tag <tag>         Run checks containing a tag
   --json             Print the full JSON report
   --config <path>    Use a custom config path
@@ -83,6 +88,33 @@ function selectChecks(config, args) {
     return check;
   });
   return filterByTag(selected, args.tag);
+}
+
+function selectPipeline(config, name) {
+  const pipeline = config.pipelines?.[name];
+  if (!pipeline) {
+    throw new Error(`Unknown pipeline: ${name}`);
+  }
+  if (!Array.isArray(pipeline) || pipeline.length === 0) {
+    throw new Error(`Pipeline ${name} must contain at least one stage.`);
+  }
+  return pipeline.map((stage) => {
+    if (!stage.name) {
+      throw new Error(`Pipeline ${name} contains a stage without a name.`);
+    }
+    if (!stage.mode && !stage.check && !stage.tag) {
+      throw new Error(`Pipeline stage ${stage.name} must define mode, check, or tag.`);
+    }
+    return {
+      name: stage.name,
+      failFast: stage.failFast !== false,
+      checks: selectChecks(config, {
+        mode: stage.mode || null,
+        check: stage.check || null,
+        tag: stage.tag || null,
+      }),
+    };
+  });
 }
 
 function filterByTag(checks, tag) {
@@ -160,6 +192,52 @@ async function runWithRetries(rootDir, check) {
   };
 }
 
+async function runChecks(rootDir, checks) {
+  const results = [];
+  for (const check of checks) {
+    results.push(await runWithRetries(rootDir, check));
+  }
+  return results;
+}
+
+async function runPipeline(rootDir, config, name) {
+  const stages = selectPipeline(config, name);
+  const stageReports = [];
+  let skipped = false;
+
+  for (const stage of stages) {
+    if (skipped) {
+      stageReports.push({
+        name: stage.name,
+        status: 'skipped',
+        failFast: stage.failFast,
+        results: [],
+      });
+      continue;
+    }
+
+    console.log(`\n=== Pipeline stage: ${stage.name} ===`);
+    const results = await runChecks(rootDir, stage.checks);
+    const blockingFailures = results.filter(
+      (result) => result.status !== 'pass' && result.required
+    );
+    const status = blockingFailures.length === 0 ? 'pass' : 'fail';
+
+    stageReports.push({
+      name: stage.name,
+      status,
+      failFast: stage.failFast,
+      results,
+    });
+
+    if (status === 'fail' && stage.failFast) {
+      skipped = true;
+    }
+  }
+
+  return stageReports;
+}
+
 function trimOutput(value) {
   const maxLength = 12000;
   if (value.length <= maxLength) return value;
@@ -181,54 +259,80 @@ function writeReport(rootDir, config, report) {
 }
 
 function summarize(report) {
-  const passed = report.results.filter((result) => result.status === 'pass').length;
-  const failed = report.results.length - passed;
-  console.log(`\nHarness ${report.status.toUpperCase()}: ${passed} passed, ${failed} failed`);
+  const results = flattenResults(report);
+  const passed = results.filter((result) => result.status === 'pass').length;
+  const failed = results.length - passed;
+  const label = report.pipeline ? `Pipeline ${report.pipeline}` : 'Harness';
+  console.log(`\n${label} ${report.status.toUpperCase()}: ${passed} passed, ${failed} failed`);
 
-  for (const result of report.results) {
-    const marker = result.status === 'pass' ? 'PASS' : 'FAIL';
-    const retryText = result.attemptCount > 1 ? ` after ${result.attemptCount} attempts` : '';
-    console.log(`- ${marker} ${result.id}${retryText} (${result.durationMs}ms)`);
+  if (report.stages) {
+    for (const stage of report.stages) {
+      console.log(`\nStage ${stage.name}: ${stage.status.toUpperCase()}`);
+      if (stage.status === 'skipped') continue;
+      for (const result of stage.results) {
+        printResult(result);
+      }
+    }
+  } else {
+    for (const result of results) {
+      printResult(result);
+    }
   }
 
   console.log(`\nReport: ${path.join(report.resultDir, 'latest.json')}`);
 }
 
+function flattenResults(report) {
+  if (!report.stages) return report.results || [];
+  return report.stages.flatMap((stage) => stage.results || []);
+}
+
+function printResult(result) {
+  const marker = result.status === 'pass' ? 'PASS' : 'FAIL';
+  const retryText = result.attemptCount > 1 ? ` after ${result.attemptCount} attempts` : '';
+  console.log(`- ${marker} ${result.id}${retryText} (${result.durationMs}ms)`);
+}
+
 async function main() {
   const args = parseArgs(process.argv);
   const config = readConfig(args.root, args.config);
-  const checks = selectChecks(config, args);
-
-  if (checks.length === 0) {
-    throw new Error('No checks selected.');
-  }
 
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
   const startedAt = new Date();
-  const results = [];
+  let results = [];
+  let stages = null;
 
-  for (const check of checks) {
-    results.push(await runWithRetries(args.root, check));
+  if (args.pipeline) {
+    stages = await runPipeline(args.root, config, args.pipeline);
+    results = stages.flatMap((stage) => stage.results);
+  } else {
+    const checks = selectChecks(config, args);
+    if (checks.length === 0) {
+      throw new Error('No checks selected.');
+    }
+    results = await runChecks(args.root, checks);
   }
 
   const endedAt = new Date();
   const blockingFailures = results.filter(
     (result) => result.status !== 'pass' && result.required
   );
-
+  const skippedStages = stages?.filter((stage) => stage.status === 'skipped') || [];
   const report = {
     runId,
-    mode: args.check ? null : args.mode || config.defaultMode || 'quick',
+    mode: args.pipeline || args.check ? null : args.mode || config.defaultMode || 'quick',
     check: args.check,
+    pipeline: args.pipeline,
     tag: args.tag,
     hook: args.hook,
     root: args.root,
-    status: blockingFailures.length === 0 ? 'pass' : 'fail',
+    status: blockingFailures.length === 0 && skippedStages.length === 0 ? 'pass' : 'fail',
     startedAt: startedAt.toISOString(),
     endedAt: endedAt.toISOString(),
     durationMs: endedAt.getTime() - startedAt.getTime(),
     resultDir: config.resultDir || 'harness/results',
     results,
+    stages,
   };
 
   writeReport(args.root, config, report);
