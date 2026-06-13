@@ -1,0 +1,16 @@
+{
+  "name": "universal-harness",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Runtime-agnostic command harness with modes, retries, timeouts, and JSON reports.",
+  "license": "MIT",
+  "scripts": {
+    "harness": "node scripts/harness-runner.js --mode quick",
+    "harness:quick": "node scripts/harness-runner.js --mode quick",
+    "harness:full": "node scripts/harness-runner.js --mode full",
+    "harness:json": "node scripts/harness-runner.js --mode full --json"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

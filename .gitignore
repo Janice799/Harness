@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+harness/results/
+universal/harness/results/
+*.log
+.env
+.env.*
+!.env.example
