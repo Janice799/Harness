@@ -30,6 +30,7 @@ node universal/scripts/harness-runner.js --root universal --tag smoke
 node universal/scripts/harness-runner.js --root universal --pipeline ci
 node universal/scripts/harness-runner.js --root universal --history
 node universal/scripts/harness-runner.js --root universal --compare latest
+node universal/scripts/harness-scheduler.js --root universal --interval 30s --mode quick
 ```
 
 Checks can define:
@@ -46,7 +47,6 @@ Checks can define:
 
 1. Add an optional `harness serve` dashboard command.
 2. Add webhook notification support.
-3. Add a scheduler command for local monitoring.
 
 ## Keep Out Of The Core For Now
 

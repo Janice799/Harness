@@ -11,6 +11,8 @@
     "harness:ci": "node scripts/harness-runner.js --pipeline ci",
     "harness:history": "node scripts/harness-runner.js --history",
     "harness:compare": "node scripts/harness-runner.js --compare latest",
+    "harness:watch": "node scripts/harness-scheduler.js --interval 30s --mode quick",
+    "harness:watch:ci": "node scripts/harness-scheduler.js --interval 30s --pipeline ci",
     "harness:json": "node scripts/harness-runner.js --mode full --json"
   },
   "engines": {

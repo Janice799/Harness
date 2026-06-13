@@ -36,6 +36,7 @@ npm run harness:ci
 npm run harness:full
 npm run harness:history
 npm run harness:compare
+npm run harness:watch
 ```
 
 Or run the universal harness directly:
@@ -47,6 +48,7 @@ npm run harness:ci
 node scripts/harness-runner.js --tag smoke
 node scripts/harness-runner.js --history
 node scripts/harness-runner.js --compare latest
+node scripts/harness-scheduler.js --interval 30s --mode quick
 ```
 
 ## Use In Any Project

@@ -11,6 +11,8 @@
     "harness:ci": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --pipeline ci",
     "harness:history": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --history",
     "harness:compare": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --compare latest",
+    "harness:watch": "node universal/scripts/harness-scheduler.js --root universal --config harness.config.json --interval 30s --mode quick",
+    "harness:watch:ci": "node universal/scripts/harness-scheduler.js --root universal --config harness.config.json --interval 30s --pipeline ci",
     "harness:json": "node universal/scripts/harness-runner.js --root universal --config harness.config.json --mode full --json"
   },
   "keywords": [

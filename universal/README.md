@@ -10,6 +10,7 @@ npm run harness:ci
 npm run harness:full
 npm run harness:history
 npm run harness:compare
+npm run harness:watch
 ```
 
 Or:
@@ -22,6 +23,7 @@ node scripts/harness-runner.js --pipeline ci
 node scripts/harness-runner.js --history
 node scripts/harness-runner.js --compare latest
 node scripts/harness-runner.js --mode quick --failures-only
+node scripts/harness-scheduler.js --interval 30s --mode quick
 ```
 
 ## Configure
@@ -101,3 +103,33 @@ For compact automation output:
 node scripts/harness-runner.js --pipeline ci --summary
 node scripts/harness-runner.js --compare latest --summary
 ```
+
+## Scheduler
+
+Use the scheduler when you want the harness to keep checking a project on an
+interval, such as local health monitoring while you work:
+
+```bash
+npm run harness:watch
+```
+
+That runs `quick` every 30 seconds. To run the CI pipeline every 30 seconds:
+
+```bash
+npm run harness:watch:ci
+```
+
+Direct usage:
+
+```bash
+node scripts/harness-scheduler.js --interval 30s --mode quick
+node scripts/harness-scheduler.js --interval 30s --pipeline ci
+```
+
+For testing the scheduler without leaving it running:
+
+```bash
+node scripts/harness-scheduler.js --interval 1s --max-runs 2
+```
+
+Stop a long-running scheduler with `Ctrl+C`.

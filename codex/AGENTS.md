@@ -37,6 +37,12 @@ Run the quick harness, compare it with the previous run if history exists, and r
   npm run harness:compare
   ```
 
+- When the user asks for continuous monitoring, use:
+
+  ```bash
+  npm run harness:watch
+  ```
+
 - If a command fails, fix the cause before continuing unless the user explicitly asks to skip it.
 - Do not claim a check passed unless it was actually run in this session.
 - If a check cannot run because dependencies or credentials are missing, report that clearly.

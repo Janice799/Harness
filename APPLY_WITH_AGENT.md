@@ -32,7 +32,13 @@ Run the quick harness, compare it with the previous run if history exists, and r
    npm run harness:compare
    ```
 
-7. Report:
+7. If the user asks for continuous monitoring, start:
+
+   ```bash
+   npm run harness:watch
+   ```
+
+8. Report:
    - which files were added or changed
    - which harness mode ran
    - pass/fail summary
