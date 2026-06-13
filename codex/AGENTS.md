@@ -4,6 +4,18 @@
 
 This repository uses a small validation harness to keep Codex work repeatable.
 
+## Applying This Harness To Another Project
+
+When asked to apply this harness to a project, use this instruction:
+
+```text
+Use git@github.com:Janice799/Harness.git as the harness template.
+Apply the universal harness to this project.
+If this is a Codex project, also apply the codex adapter.
+Then update harness.config.json for this project's build/test/lint/smoke commands.
+Run the quick harness and report the result.
+```
+
 ## Required Behavior
 
 - Before editing, inspect the relevant files and existing project conventions.

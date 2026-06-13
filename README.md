@@ -77,6 +77,21 @@ AGENTS.md
 Codex will read `AGENTS.md` automatically. You can also explicitly ask Codex to
 use `$codex-verification-loop`.
 
+## Give This To Another Agent
+
+If you want another coding agent to apply this harness to a project, point it to
+[`APPLY_WITH_AGENT.md`](APPLY_WITH_AGENT.md).
+
+Short version:
+
+```text
+Use git@github.com:Janice799/Harness.git as the harness template.
+Apply the universal harness to this project.
+If this is a Codex project, also apply the codex adapter.
+Then update harness.config.json for this project's build/test/lint/smoke commands.
+Run the quick harness and report the result.
+```
+
 ## Reports
 
 Harness reports are written to:
